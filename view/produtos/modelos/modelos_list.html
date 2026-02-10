@@ -1,0 +1,21 @@
+{{define "modelos_list"}}
+<section class="card">
+	<header class="list-header">
+		<h3>Lista</h3>
+	</header>
+
+	<ul class="list">
+		{{range .Modelos}}
+		<li
+			hx-get="/produtos/modelos/form?id={{.ID}}"
+			hx-target="#modelos-form"
+			hx-swap="innerHTML"
+			class="list-item"
+		>
+			<strong>{{.Nome}}</strong>
+			<span>{{.Linha}}</span>
+		</li>
+		{{end}}
+	</ul>
+</section>
+{{end}}

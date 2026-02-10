@@ -1,0 +1,53 @@
+{{define "produtos_index"}}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<title>ERP • Produtos</title>
+
+	<link href="/static/style.css" rel="stylesheet">
+	<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+
+	<header class="page-header">
+		<h1>Produtos</h1>
+
+		<nav class="produtos-nav">
+			<button
+				hx-get="/produtos/catalogo"
+				hx-target="#produtos-main"
+				hx-swap="innerHTML"
+			>
+				Catálogo
+			</button>
+
+			<button
+				hx-get="/produtos/modelos"
+				hx-target="#produtos-main"
+				hx-swap="innerHTML"
+			>
+				Modelos
+			</button>
+
+			<button
+				hx-get="/produtos/fichatec"
+				hx-target="#produtos-main"
+				hx-swap="innerHTML"
+			>
+				Ficha Técnica
+			</button>
+		</nav>
+	</header>
+
+	<main id="produtos-main"
+		hx-get="/produtos/catalogo"
+		hx-trigger="load"
+		hx-swap="innerHTML"
+	>
+		<!-- Conteúdo dinâmico entra aqui -->
+	</main>
+
+</body>
+</html>
+{{end}}

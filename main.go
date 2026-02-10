@@ -62,12 +62,13 @@ func main() {
 	}
 
 	log.Printf("🕒 Banco respondeu em: %s", now)
-
 	// Templates
+	templates := template.New("")
+	template.Must(templates.ParseGlob("view/*/*.html"))
+	template.Must(templates.ParseGlob("view/*/*/*.html"))
+
 	renderer := &TemplateRenderer{
-		templates: template.Must(
-			template.New("").ParseGlob("view/*.html"),
-		),
+		templates: templates,
 	}
 
 	for _, tmpl := range renderer.templates.Templates() {

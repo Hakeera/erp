@@ -1,0 +1,45 @@
+{{define "modelos_form"}}
+<section class="card">
+	<h3>{{if .ID}}Editar Modelo{{else}}Novo Modelo{{end}}</h3>
+
+	<form
+		{{if .ID}}
+			hx-put="/produtos/modelos/{{.ID}}"
+		{{else}}
+			hx-post="/produtos/modelos"
+		{{end}}
+		hx-target="#modelos-list"
+		hx-swap="innerHTML"
+	>
+
+		<input type="hidden" name="id" value="{{.ID}}">
+
+		<label>Nome</label>
+		<input name="nome" value="{{.Nome}}" required>
+
+		<label>Linha</label>
+		<input name="linha" value="{{.Linha}}">
+
+		<h4>Consumo Base</h4>
+
+		<label>Corte</label>
+		<input type="number" name="corte" value="{{.Corte}}">
+
+		<label>Costura</label>
+		<input type="number" name="costura" value="{{.Costura}}">
+
+		<label>Acabamento</label>
+		<input type="number" name="acabamento" value="{{.Acabamento}}">
+
+		<label>Aviamento</label>
+		<input type="number" name="aviamento" value="{{.Aviamento}}">
+
+		<label>Descrição</label>
+		<textarea name="descricao">{{.Descricao}}</textarea>
+
+		<button type="submit">
+			{{if .ID}}Atualizar{{else}}Salvar{{end}}
+		</button>
+	</form>
+</section>
+{{end}}
