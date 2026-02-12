@@ -6,6 +6,30 @@ import (
 	"erp/model"
 )
 
+// --- CREATE ---
+func CriarModelo(m model.Modelo) error {
+
+	_, err := config.GetDB().Exec(
+		context.Background(),
+		`
+		INSERT INTO modelos
+		(nome, linha, corte, costura, acabamento, aviamento, consumo_por_grade, descricao)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		`,
+		m.Nome,
+		m.Linha,
+		m.Corte,
+		m.Costura,
+		m.Acabamento,
+		m.Aviamento,
+		m.ConsumoPorGrade,
+		m.Descricao,
+	)
+
+	return err
+}
+
+// --- READ ---
 func ListarModelos() ([]model.Modelo, error) {
 
 	rows, err := config.GetDB().Query(
@@ -43,7 +67,7 @@ func ListarModelos() ([]model.Modelo, error) {
 			&m.Costura,
 			&m.Acabamento,
 			&m.Aviamento,
-			&m.ConsumoPorGrade, // JSONB → map[string]float64
+			&m.ConsumoPorGrade,
 			&m.Descricao,
 		); err != nil {
 			return nil, err
@@ -59,10 +83,86 @@ func ListarModelos() ([]model.Modelo, error) {
 	return modelos, nil
 }
 
-func CriarModelo(modelo model.Modelo) error {
-	return nil
+// --- UPDATE ---
+func BuscarModeloPorID(id int) (model.Modelo, error) {
+
+	row := config.GetDB().QueryRow(
+		context.Background(),
+		`
+		SELECT
+			modelo_id,
+			nome,
+			linha,
+			corte,
+			costura,
+			acabamento,
+			aviamento,
+			consumo_por_grade,
+			COALESCE(descricao, '')
+		FROM modelos
+		WHERE modelo_id = $1
+		`,
+		id,
+	)
+
+	var m model.Modelo
+
+	err := row.Scan(
+		&m.ID,
+		&m.Nome,
+		&m.Linha,
+		&m.Corte,
+		&m.Costura,
+		&m.Acabamento,
+		&m.Aviamento,
+		&m.ConsumoPorGrade,
+		&m.Descricao,
+	)
+
+	return m, err
 }
 
-func BuscarModelo(id int) ([]model.Modelo, error) {
-	return nil, nil
+// --- UPDATE ---
+func AtualizarModelo(m model.Modelo) error {
+
+	_, err := config.GetDB().Exec(
+		context.Background(),
+		`
+		UPDATE modelos
+		SET
+			nome = $1,
+			linha = $2,
+			corte = $3,
+			costura = $4,
+			acabamento = $5,
+			aviamento = $6,
+			consumo_por_grade = $7,
+			descricao = $8,
+			updated_at = now()
+		WHERE modelo_id = $9
+		`,
+		m.Nome,
+		m.Linha,
+		m.Corte,
+		m.Costura,
+		m.Acabamento,
+		m.Aviamento,
+		m.ConsumoPorGrade,
+		m.Descricao,
+		m.ID,
+	)
+
+	return err
+}
+
+// --- DELETE ---
+func DeletarModelo(id int) error {
+
+	_, err := config.GetDB().Exec(
+		context.Background(),
+		`DELETE FROM modelos WHERE modelo_id = $1`,
+		id,
+	)
+
+	return err
 }

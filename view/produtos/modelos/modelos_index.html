@@ -1,33 +1,11 @@
 {{define "modelos_index"}}
-<section class="modelos-layout">
-
-	<header>
-		<h2>Modelos</h2>
-	</header>
-
-	<div class="modelos-grid">
-
-		<!-- LISTA -->
-		<div
-			id="modelos-list"
-			hx-get="/produtos/modelos/list"
-			hx-trigger="load"
-			hx-swap="innerHTML"
-		>
-			<!-- lista entra aqui -->
-		</div>
-
-		<!-- FORM -->
-		<div
-			id="modelos-form"
-			hx-get="/produtos/modelos/form"
-			hx-trigger="load"
-			hx-swap="innerHTML"
-		>
-			<!-- form entra aqui -->
-		</div>
-
+<div id="modelos-container">
+	<div id="modelos-list">
+		{{template "modelos_list" .}}
 	</div>
 
-</section>
+	<div id="modelos-form">
+		{{template "modelos_form" .Modelo}}
+	</div>
+</div>
 {{end}}

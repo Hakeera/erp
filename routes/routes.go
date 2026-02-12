@@ -17,11 +17,12 @@ func SetUpRoutes(e *echo.Echo) {
 	e.GET("/produtos/catalogo", produtos.ProdutosCatalogo)
 
 	// Modelos
-	e.GET("/produtos/modelos", produtos.ModelosIndex)     // Setor de Modelos
-	e.GET("/produtos/modelos/list", produtos.ModelosList) // Listagem de Modelos
-	e.GET("/produtos/modelos/form", produtos.ModelosForm) // Formulário de Edição de Modelos
-	e.POST("/produtos/modelos", produtos.ModelosCreate)   // Criar Modelo
-	e.PUT("/produtos/modelos/:id", produtos.ModelosCreate)
+	e.GET("/produtos/modelos", produtos.ModelosIndex)         // Setor de Modelos
+	e.GET("/produtos/modelos/list", produtos.ListarModelos)   // Listagem de Modelos
+	e.GET("/produtos/modelos/form", produtos.ModelosForm)     // Formulário de Edição de Modelos
+	e.POST("/produtos/modelos", produtos.CriarModelo)         // Criar Modelo
+	e.PUT("/produtos/modelos/:id", produtos.AtualizarModelo)  // Atualizar Modelo
+	e.DELETE("/produtos/modelos/:id", produtos.DeletarModelo) // Excluir Modelo
 
 	// Ficha Técnica
 	e.GET("/produtos/fichatec", produtos.FichaTecIndex)

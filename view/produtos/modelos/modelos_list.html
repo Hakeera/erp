@@ -2,6 +2,15 @@
 <section class="card">
 	<header class="list-header">
 		<h3>Lista</h3>
+
+		<button
+			class="btn-primary"
+			hx-get="/produtos/modelos/form"
+			hx-target="#modelos-form"
+			hx-swap="innerHTML"
+		>
+			Novo Modelo
+		</button>
 	</header>
 
 	<ul class="list">

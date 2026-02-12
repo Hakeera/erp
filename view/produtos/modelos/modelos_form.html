@@ -8,8 +8,8 @@
 		{{else}}
 			hx-post="/produtos/modelos"
 		{{end}}
-		hx-target="#modelos-list"
-		hx-swap="innerHTML"
+		hx-target="#modelos-container"
+		hx-swap="outerHTML"
 	>
 
 		<input type="hidden" name="id" value="{{.ID}}">
@@ -37,9 +37,42 @@
 		<label>Descrição</label>
 		<textarea name="descricao">{{.Descricao}}</textarea>
 
+<h4>Consumo por Categoria de Grade</h4>
+
+<div class="grade-grid">
+
+	<label>Infantil (00–08)</label>
+	<input type="number" step="0.01" name="grade_infantil"
+		value="{{index .ConsumoPorGrade "INFANTIL"}}">
+
+	<label>Juvenil (10–16)</label>
+	<input type="number" step="0.01" name="grade_juvenil"
+		value="{{index .ConsumoPorGrade "JUVENIL"}}">
+
+	<label>Adulto (PP–GG)</label>
+	<input type="number" step="0.01" name="grade_adulto"
+		value="{{index .ConsumoPorGrade "ADULTO"}}">
+
+	<label>Extra (XG–Esp)</label>
+	<input type="number" step="0.01" name="grade_extra"
+		value="{{index .ConsumoPorGrade "EXTRA"}}">
+
+</div>
 		<button type="submit">
 			{{if .ID}}Atualizar{{else}}Salvar{{end}}
 		</button>
 	</form>
+	{{if .ID}}
+	<button
+		type="button"
+		class="btn-danger"
+		hx-delete="/produtos/modelos/{{.ID}}"
+		hx-target="#modelos-container"
+		hx-swap="outerHTML"
+		hx-confirm="Tem certeza que deseja excluir este modelo?"
+	>
+		Excluir
+	</button>
+	{{end}}
 </section>
 {{end}}
