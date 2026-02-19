@@ -1,0 +1,71 @@
+{{define "fichatec_form"}}
+<section class="card">
+	<h3>{{if .FichaID}}Editar Ficha{{else}}Criar Ficha{{end}}</h3>
+
+	<form
+		{{if .FichaID}}
+			hx-put="/produtos/fichatec/{{.FichaID}}"
+		{{else}}
+			hx-post="/produtos/fichatec"
+		{{end}}
+		hx-target="#fichatec-container"
+		hx-swap="outerHTML"
+	>
+
+		<input type="hidden" name="ficha_id" value="{{.FichaID}}">
+
+		<label>Modelo</label>
+		<input type="number" name="modelo_id" value="{{.ModeloID}}" required>
+
+		<label>Referência do Tecido</label>
+		<input name="tecido_ref" value="{{.TecidoRef}}">
+
+		<label>Tecido</label>
+		<input name="tecido" value="{{.Tecido}}" required>
+
+		<label>Cor</label>
+		<input name="cor" value="{{.Cor}}" required>
+
+		<label>Cliente</label>
+		<input name="cliente" value="{{.Cliente}}" required>
+
+
+		<label>Tipo de Arte</label>
+		<input name="tipo_arte" value="{{.TipoArte}}">
+
+		<label>Descrição</label>
+		<textarea name="descricao">{{.Descricao}}</textarea>
+
+		<h4>Custos</h4>
+
+		<label>Custo Modelo</label>
+		<input type="number" name="custo_modelo" value="{{.Custos.CustoModelo}}">
+
+		<label>Custo Tecido</label>
+		<input type="number" name="custo_tecido" value="{{.Custos.CustoTecido}}">
+
+		<label>Custo Arte</label>
+		<input type="number" name="custo_arte" value="{{.Custos.CustoArte}}">
+
+		<label>Total</label>
+		<input type="number" value="{{.Custos.Total}}" disabled>
+
+		<button type="submit">
+			{{if .FichaID}}Atualizar{{else}}Salvar{{end}}
+		</button>
+	</form>
+
+	{{if .FichaID}}
+	<button
+		type="button"
+		class="btn-danger"
+		hx-delete="/produtos/fichatec/{{.FichaID}}"
+		hx-target="#fichatec-container"
+		hx-swap="outerHTML"
+		hx-confirm="Tem certeza que deseja excluir essa ficha técnica?"
+	>
+		Excluir
+	</button>
+	{{end}}
+</section>
+{{end}}

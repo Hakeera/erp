@@ -83,7 +83,6 @@ func ListarModelos() ([]model.Modelo, error) {
 	return modelos, nil
 }
 
-// --- UPDATE ---
 func BuscarModeloPorID(id int) (model.Modelo, error) {
 
 	row := config.GetDB().QueryRow(

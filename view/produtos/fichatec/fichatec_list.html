@@ -1,0 +1,37 @@
+{{define "fichatec_list"}}
+<section class="card">
+
+	<header class="list-header">
+		<h3>Fichas Técnicas</h3>
+
+		<button
+			class="btn-primary"
+			hx-get="/produtos/fichatec/form"
+			hx-target="#fichatec-form"
+			hx-swap="innerHTML"
+		>
+			Nova Ficha
+		</button>
+	</header>
+
+	<ul class="list">
+		{{range .Fichas}}
+		<li
+			hx-get="/produtos/fichatec/form?id={{.FichaID}}"
+			hx-target="#fichatec-form"
+			hx-swap="innerHTML"
+			class="list-item"
+		>
+			<strong>Modelo {{.ModeloID}}</strong>
+			<span>{{.Tecido}} • {{.Cor}} • {{.Cliente}}</span>
+			<small>Total: {{.Custos.Total}}</small>
+		</li>
+		{{else}}
+		<li class="list-empty">
+			Nenhuma ficha cadastrada.
+		</li>
+		{{end}}
+	</ul>
+
+</section>
+{{end}}

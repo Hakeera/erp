@@ -1,7 +1,7 @@
 package model
 
 type FichaTecnica struct {
-	ID       int
+	FichaID  int
 	ModeloID int
 
 	TecidoRef string

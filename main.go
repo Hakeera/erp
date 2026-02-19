@@ -52,25 +52,21 @@ func main() {
 	// Teste rápido de vida
 	ctx := context.Background()
 	var now time.Time
-
 	err := config.GetDB().
 		QueryRow(ctx, "SELECT now()").
 		Scan(&now)
-
 	if err != nil {
 		log.Fatalf("❌ Banco não respondeu: %v", err)
 	}
-
 	log.Printf("🕒 Banco respondeu em: %s", now)
+
 	// Templates
 	templates := template.New("")
 	template.Must(templates.ParseGlob("view/*/*.html"))
 	template.Must(templates.ParseGlob("view/*/*/*.html"))
-
 	renderer := &TemplateRenderer{
 		templates: templates,
 	}
-
 	for _, tmpl := range renderer.templates.Templates() {
 		log.Printf("📄 Template carregado: %s", tmpl.Name())
 	}

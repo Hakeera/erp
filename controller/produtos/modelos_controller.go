@@ -2,19 +2,17 @@ package produtos
 
 import (
 	"erp/model"
-	repository "erp/repository/produtos"
 	"erp/service"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-// --- Página Inicial ---
+// --- Página Inicial com todas as partes carregadas e renderizadas ---
 func ModelosIndex(c echo.Context) error {
 
-	modelos, err := service.ListarModelos() //TODO: Camada service
+	modelos, err := service.ListarModelos()
 	if err != nil {
 		return err
 	}
@@ -76,9 +74,8 @@ func CriarModelo(c echo.Context) error {
 
 // --- READ ---
 func ListarModelos(c echo.Context) error {
-	fmt.Println("MODELO INDEX!!!!")
 
-	modelos, err := repository.ListarModelos()
+	modelos, err := service.ListarModelos()
 	if err != nil {
 		return err
 	}
