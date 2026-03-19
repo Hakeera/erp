@@ -1,0 +1,50 @@
+{{define "fichatec_modelo_overlay"}}
+<div class="overlay">
+
+	<div class="overlay-content">
+
+		<h3>Selecionar Modelo</h3>
+
+		<!-- filtros -->
+		<div class="filtros">
+
+			<input
+				type="text"
+				name="nome"
+				placeholder="Buscar modelo..."
+				hx-get="/produtos/fichatec/modelo"
+				hx-trigger="keyup changed delay:400ms"
+				hx-target="#modelos-resultado"
+			>
+
+			<div class="linhas">
+				{{range .Linhas}}
+				<button
+					type="button"
+					hx-get="/produtos/fichatec/modelo?linha={{.}}"
+					hx-target="#modelos-resultado"
+				>
+					{{.}}
+				</button>
+				{{end}}
+			</div>
+
+		</div>
+
+		<!-- resultado -->
+		<div id="modelos-resultado">
+			<!-- lista vem via HTMX -->
+		</div>
+
+		<button
+			class="btn-close"
+			hx-get=""
+			hx-target="#overlay-container"
+			hx-swap="innerHTML"
+		>
+			Fechar
+		</button>
+
+	</div>
+</div>
+{{end}}

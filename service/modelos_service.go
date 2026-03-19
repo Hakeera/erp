@@ -76,6 +76,15 @@ func BuscarModeloPorID(id int) (model.Modelo, error) {
 	return modelo, nil
 }
 
+func ModelosComFiltro(nome, linha string) ([]model.Modelo, error) {
+
+	return repository.BuscarModelosComFiltro(nome, linha)
+}
+
+func ListarLinhasModelos() ([]string, error) {
+	return repository.ListarLinhasModelos()
+}
+
 // --- UPDATE ---
 func AtualizarModelo(m model.Modelo) error {
 

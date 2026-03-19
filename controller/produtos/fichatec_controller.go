@@ -3,6 +3,7 @@ package produtos
 import (
 	"erp/model"
 	"erp/service"
+	"erp/viewmodel"
 	"net/http"
 	"strconv"
 
@@ -10,23 +11,33 @@ import (
 )
 
 // --- Página Inicial com todas as partes carregadas e renderizadas ---
+// FichatecIndex — passa viewmodel no FichaTec
 func FichatecIndex(c echo.Context) error {
-
 	fichas, err := service.ListarFichatec()
 	if err != nil {
 		return err
 	}
 
-	data := struct {
-		Fichas   []model.FichaTecnica
-		FichaTec model.FichaTecnica
-	}{
-		Fichas: fichas,
-		FichaTec: model.FichaTecnica{
-			Custos: model.FichaCustos{},
-		},
+	// monta lista com modelo resolvido
+	fichasForms := make([]viewmodel.FichaTecForm, 0, len(fichas))
+	for _, f := range fichas {
+		vm := viewmodel.FromFicha(f)
+		if f.ModeloID != 0 {
+			modelo, err := service.BuscarModeloPorID(f.ModeloID)
+			if err == nil {
+				vm.Modelo = modelo
+			}
+		}
+		fichasForms = append(fichasForms, vm)
 	}
 
+	data := struct {
+		Fichas   []viewmodel.FichaTecForm
+		FichaTec viewmodel.FichaTecForm
+	}{
+		Fichas:   fichasForms,
+		FichaTec: viewmodel.FichaTecForm{},
+	}
 	return c.Render(http.StatusOK, "fichatec_index", data)
 }
 
@@ -56,32 +67,39 @@ func CriarFicha(c echo.Context) error {
 }
 
 // --- READ ---
+
+// FichatecForm — vazio ou edição
 func FichatecForm(c echo.Context) error {
-
 	idStr := c.QueryParam("id")
-	// Se não tiver ID → formulário vazio (novo)
 	if idStr == "" {
-		return c.Render(http.StatusOK, "fichatec_form", model.FichaTecnica{
-			Custos: model.FichaCustos{},
-		})
+		return c.Render(http.StatusOK, "fichatec_form", viewmodel.FichaTecForm{})
 	}
-
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return c.String(400, "ID inválido")
 	}
-
 	ficha, err := service.BuscarFichaPorID(id)
 	if err != nil {
 		return c.String(404, err.Error())
 	}
-
-	return c.Render(http.StatusOK, "fichatec_form", ficha)
+	return c.Render(http.StatusOK, "fichatec_form", viewmodel.FromFicha(ficha))
 }
 
-func ListarFichatec(c echo.Context) error {
-
-	return nil
+// ModeloPraFichaTec — selecionou modelo no overlay
+// Seleciona o Modelo para o Formulário da Fichatec
+func ModeloPraFichaTec(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.String(400, "ID inválido")
+	}
+	modelo, err := service.BuscarModeloPorID(id)
+	if err != nil {
+		return c.String(500, err.Error())
+	}
+	return c.Render(http.StatusOK, "fichatec_form", viewmodel.FichaTecForm{
+		Modelo:   modelo,
+		ModeloID: modelo.ID,
+	})
 }
 
 // --- UPDATE ---
@@ -131,4 +149,25 @@ func DeletarFichatec(c echo.Context) error {
 	}
 
 	return FichatecIndex(c)
+}
+
+// Através da requisição filtra os modelos de acordo com Linha e Nome
+// Retorna listagem de modelos para o render no overlay
+func FiltrarModelos(c echo.Context) error {
+
+	nome := c.QueryParam("nome")
+	linha := c.QueryParam("linha")
+
+	modelos, err := service.ModelosComFiltro(nome, linha)
+	if err != nil {
+		return c.String(500, err.Error())
+	}
+
+	data := struct {
+		Modelos []model.Modelo
+	}{
+		Modelos: modelos,
+	}
+
+	return c.Render(http.StatusOK, "fichatec_modelos_search", data)
 }

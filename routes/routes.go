@@ -29,14 +29,14 @@ func SetUpRoutes(e *echo.Echo) {
 	e.PUT("/produtos/fichatec/:id", produtos.AtualizarFichatec)  // Atualizar Fichatec
 	e.DELETE("/produtos/fichatec/:id", produtos.DeletarFichatec) // Excluir Fichatec
 
+	e.GET("/produtos/fichatec/modelo", produtos.FiltrarModelos)             // Filtra Modelos por Nome/Linha
+	e.GET("/produtos/fichatec/modelo/form/:id", produtos.ModeloPraFichaTec) // Seleciona Modelo da Fichatec
+	e.GET("/produtos/fichatec/modelo/overlay", produtos.ModeloOverlay)      // Abre overlay de Modelos
+
 	// TODO: Criação de Fichas deve obter o Nome de Modelo e custos do modelo automaticamente
 	// Criar Ficha deve trazer uma prévisualização dos produtos que vão ser criados
 	// Ficha_Tabela deve ser implementada com MarkUp e tabelas de preços para isso
 	e.POST("/produtos/fichatec", produtos.CriarFicha) // Cria FichaTec
-
-	// FIXME: Essas rotas são necessárias sendo que Index já faz a listagem?
-	// e.GET("/produtos/modelos/list", produtos.ListarModelos)   // Listagem de Modelos
-	// e.GET("/produtos/fichatec/list", produtos.ListarFichatec) // Listagem de Fichatec
 
 	// e.GET("/clientes"", controller.)
 

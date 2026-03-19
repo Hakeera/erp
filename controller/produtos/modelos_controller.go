@@ -179,3 +179,22 @@ func DeletarModelo(c echo.Context) error {
 
 	return ModelosIndex(c)
 }
+
+// --- MISC ---
+
+// Exibe Overlay para seleção de Modelos
+func ModeloOverlay(c echo.Context) error {
+
+	linhas, err := service.ListarLinhasModelos()
+	if err != nil {
+		return c.String(500, err.Error())
+	}
+
+	data := struct {
+		Linhas []string
+	}{
+		Linhas: linhas,
+	}
+
+	return c.Render(http.StatusOK, "fichatec_modelo_overlay", data)
+}

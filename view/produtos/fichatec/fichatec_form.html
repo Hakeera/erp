@@ -4,18 +4,30 @@
 
 	<form
 		{{if .FichaID}}
-			hx-put="/produtos/fichatec/{{.FichaID}}"
+		hx-put="/produtos/fichatec/{{.FichaID}}"
 		{{else}}
-			hx-post="/produtos/fichatec"
+		hx-post="/produtos/fichatec"
 		{{end}}
 		hx-target="#fichatec-container"
 		hx-swap="outerHTML"
 	>
 
 		<input type="hidden" name="ficha_id" value="{{.FichaID}}">
+		<button
+			type="button"
+			class="btn-secondary"
+			hx-get="/produtos/fichatec/modelo/overlay"
+			hx-target="#overlay-container"
+			hx-swap="innerHTML"
+		>
+			Selecionar Modelo
+		</button>
 
-		<label>Modelo</label>
-		<input type="number" name="modelo_id" value="{{.ModeloID}}" required>
+
+		<!-- preview: usa Nome em vez de só ID -->
+		<div id="modelo-selecionado">
+			<input name="modelo_id" value="{{.Modelo.Nome}}">
+		</div>
 
 		<label>Referência do Tecido</label>
 		<input name="tecido_ref" value="{{.TecidoRef}}">

@@ -4,6 +4,7 @@ import (
 	"context"
 	"erp/config"
 	"erp/model"
+	"strconv"
 )
 
 // --- CREATE ---
@@ -119,6 +120,97 @@ func BuscarModeloPorID(id int) (model.Modelo, error) {
 	)
 
 	return m, err
+}
+
+func BuscarModelosComFiltro(nome, linha string) ([]model.Modelo, error) {
+
+	query := `
+		SELECT
+			modelo_id,
+			nome,
+			linha,
+			corte,
+			costura,
+			acabamento,
+			aviamento,
+			consumo_por_grade,
+			COALESCE(descricao, '')
+		FROM modelos
+		WHERE 1=1
+	`
+
+	args := []interface{}{}
+	i := 1
+
+	if nome != "" {
+		query += " AND nome ILIKE $" + strconv.Itoa(i)
+		args = append(args, "%"+nome+"%")
+		i++
+	}
+
+	if linha != "" {
+		query += " AND linha ILIKE $" + strconv.Itoa(i)
+		args = append(args, "%"+linha+"%")
+		i++
+	}
+
+	query += " ORDER BY nome LIMIT 20"
+
+	rows, err := config.GetDB().Query(context.Background(), query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var modelos []model.Modelo
+
+	for rows.Next() {
+		var m model.Modelo
+
+		err := rows.Scan(
+			&m.ID,
+			&m.Nome,
+			&m.Linha,
+			&m.Corte,
+			&m.Costura,
+			&m.Acabamento,
+			&m.Aviamento,
+			&m.ConsumoPorGrade,
+			&m.Descricao,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		modelos = append(modelos, m)
+	}
+
+	return modelos, nil
+}
+
+// Obtém as linhas cadastradas
+func ListarLinhasModelos() ([]string, error) {
+
+	rows, err := config.GetDB().Query(
+		context.Background(),
+		`SELECT DISTINCT linha FROM modelos ORDER BY linha`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var linhas []string
+
+	for rows.Next() {
+		var l string
+		if err := rows.Scan(&l); err != nil {
+			return nil, err
+		}
+		linhas = append(linhas, l)
+	}
+
+	return linhas, nil
 }
 
 // --- UPDATE ---

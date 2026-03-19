@@ -1,0 +1,18 @@
+{{define "fichatec_modelos_search"}}
+<ul class="list">
+	{{range .Modelos}}
+
+	<li
+		class="list-item"
+		hx-get="/produtos/fichatec/modelo/form/{{.ID}}"
+		hx-target="#fichatec-form"
+		hx-swap="innerHTML"
+	>
+		<strong>{{.Nome}}</strong>
+		<span>{{.Linha}}</span>
+	</li>
+	{{else}}
+	<li>Nenhum modelo encontrado</li>
+	{{end}}
+</ul>
+{{end}}
