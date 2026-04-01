@@ -34,3 +34,16 @@ func FromFichaComModelo(f model.FichaTecnica, m model.Modelo) FichaTecForm {
 	vm.Modelo = m
 	return vm
 }
+
+func FromModeloParaFichaForm(m model.Modelo) FichaTecForm {
+
+	custoModelo := m.Corte + m.Costura + m.Acabamento + m.Aviamento
+
+	return FichaTecForm{
+		ModeloID: m.ID,
+		Modelo:   m,
+		Custos: model.FichaCustos{
+			CustoModelo: custoModelo,
+		},
+	}
+}

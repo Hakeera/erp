@@ -4,6 +4,7 @@ import (
 	"erp/model"
 	"erp/service"
 	"erp/viewmodel"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -60,6 +61,7 @@ func CriarFicha(c echo.Context) error {
 	f.Custos.CustoArte, _ = strconv.Atoi(c.FormValue("custo_arte"))
 
 	if err := service.CriarFicha(f); err != nil {
+		log.Println("ERRO REPO CRIAR FICHA:", err)
 		return c.String(400, err.Error())
 	}
 
@@ -88,18 +90,20 @@ func FichatecForm(c echo.Context) error {
 // ModeloPraFichaTec — selecionou modelo no overlay
 // Seleciona o Modelo para o Formulário da Fichatec
 func ModeloPraFichaTec(c echo.Context) error {
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.String(400, "ID inválido")
 	}
+
 	modelo, err := service.BuscarModeloPorID(id)
 	if err != nil {
 		return c.String(500, err.Error())
 	}
-	return c.Render(http.StatusOK, "fichatec_form", viewmodel.FichaTecForm{
-		Modelo:   modelo,
-		ModeloID: modelo.ID,
-	})
+
+	vm := viewmodel.FromModeloParaFichaForm(modelo)
+
+	return c.Render(http.StatusOK, "fichatec_form", vm)
 }
 
 // --- UPDATE ---

@@ -25,8 +25,11 @@
 
 
 		<!-- preview: usa Nome em vez de só ID -->
+		<div id="modeloid-selecionado">
+			<input type="hidden" name="modelo_id" value="{{.Modelo.ID}}">
+		</div>
 		<div id="modelo-selecionado">
-			<input name="modelo_id" value="{{.Modelo.Nome}}">
+			<input name="modelo_nome" value="{{.Modelo.Nome}}">
 		</div>
 
 		<label>Referência do Tecido</label>
@@ -51,7 +54,12 @@
 		<h4>Custos</h4>
 
 		<label>Custo Modelo</label>
-		<input type="number" name="custo_modelo" value="{{.Custos.CustoModelo}}">
+		<input
+			type="number"
+			name="custo_modelo"
+			value="{{.Custos.CustoModelo}}"
+			readonly
+		>
 
 		<label>Custo Tecido</label>
 		<input type="number" name="custo_tecido" value="{{.Custos.CustoTecido}}">

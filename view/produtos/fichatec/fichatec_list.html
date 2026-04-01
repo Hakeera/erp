@@ -22,9 +22,9 @@
 			hx-swap="innerHTML"
 			class="list-item"
 		>
-			<strong>Modelo {{.Modelo.Nome}}</strong>
-			<span>{{.Tecido}} • {{.Cor}} • {{.Cliente}}</span>
-			<small>Total: {{.Custos.Total}}</small>
+			<strong>{{.Modelo.Nome}}</strong>
+			<span>• {{.Tecido}} • {{.Cor}} • {{.Cliente}}</span>
+			<small> - Custo Total: {{.Custos.Total}}</small>
 		</li>
 		{{else}}
 		<li class="list-empty">
