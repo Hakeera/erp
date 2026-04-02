@@ -4,6 +4,7 @@ import (
 	"erp/model"
 	"erp/service"
 	"erp/viewmodel"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -56,9 +57,14 @@ func CriarFicha(c echo.Context) error {
 
 	f.ModeloID, _ = strconv.Atoi(c.FormValue("modelo_id"))
 
-	f.Custos.CustoModelo, _ = strconv.Atoi(c.FormValue("custo_modelo"))
-	f.Custos.CustoTecido, _ = strconv.Atoi(c.FormValue("custo_tecido"))
-	f.Custos.CustoArte, _ = strconv.Atoi(c.FormValue("custo_arte"))
+	custosGrade, err := parseCustosGrade(c)
+	if err != nil {
+		log.Println("Erro CustosGrade:", err)
+		return c.String(400, err.Error())
+	}
+
+	f.CustosGrade = custosGrade
+	f.Custos = parseCustos(c)
 
 	if err := service.CriarFicha(f); err != nil {
 		log.Println("ERRO REPO CRIAR FICHA:", err)
@@ -76,15 +82,20 @@ func FichatecForm(c echo.Context) error {
 	if idStr == "" {
 		return c.Render(http.StatusOK, "fichatec_form", viewmodel.FichaTecForm{})
 	}
+
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return c.String(400, "ID inválido")
 	}
-	ficha, err := service.BuscarFichaPorID(id)
+
+	ficha, modelo, err := service.BuscarFichaPorID(id)
 	if err != nil {
 		return c.String(404, err.Error())
 	}
-	return c.Render(http.StatusOK, "fichatec_form", viewmodel.FromFicha(ficha))
+
+	// monta viewmodel com o modelo
+	vm := viewmodel.FromFichaComModelo(ficha, modelo)
+	return c.Render(http.StatusOK, "fichatec_form", vm)
 }
 
 // ModeloPraFichaTec — selecionou modelo no overlay
@@ -115,7 +126,7 @@ func AtualizarFichatec(c echo.Context) error {
 		return c.String(400, "ID inválido")
 	}
 
-	ficha := model.FichaTecnica{
+	f := model.FichaTecnica{
 		FichaID:   id,
 		TecidoRef: c.FormValue("tecido_ref"),
 		Tecido:    c.FormValue("tecido"),
@@ -125,14 +136,16 @@ func AtualizarFichatec(c echo.Context) error {
 		TipoArte:  c.FormValue("tipo_arte"),
 	}
 
-	ficha.ModeloID, _ = strconv.Atoi(c.FormValue("modelo_id"))
+	custosGrade, err := parseCustosGrade(c)
+	if err != nil {
+		return c.String(400, err.Error())
+	}
 
-	ficha.Custos = model.FichaCustos{}
-	ficha.Custos.CustoModelo, _ = strconv.Atoi(c.FormValue("custo_modelo"))
-	ficha.Custos.CustoTecido, _ = strconv.Atoi(c.FormValue("custo_tecido"))
-	ficha.Custos.CustoArte, _ = strconv.Atoi(c.FormValue("custo_arte"))
+	f.Custos = model.FichaCustos{}
+	f.CustosGrade = custosGrade
+	f.Custos = parseCustos(c)
 
-	if err := service.AtualizarFichatec(ficha); err != nil {
+	if err := service.AtualizarFichatec(f); err != nil {
 		return c.String(400, err.Error())
 	}
 
@@ -174,4 +187,53 @@ func FiltrarModelos(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "fichatec_modelos_search", data)
+}
+
+// HELPERS
+
+// Paseia os Custos de Tecido por Grade
+func parseCustosGrade(c echo.Context) ([]model.FichaCustoGrade, error) {
+	parseInt := func(key string) (int, error) {
+		return strconv.Atoi(c.FormValue(key))
+	}
+
+	infantil, err := parseInt("custo_infantil")
+	if err != nil {
+		return nil, fmt.Errorf("custo_infantil inválido")
+	}
+
+	juvenil, err := parseInt("custo_juvenil")
+	if err != nil {
+		return nil, fmt.Errorf("custo_juvenil inválido")
+	}
+
+	adulto, err := parseInt("custo_adulto")
+	if err != nil {
+		return nil, fmt.Errorf("custo_adulto inválido")
+	}
+
+	extra, err := parseInt("custo_extra")
+	if err != nil {
+		return nil, fmt.Errorf("custo_extra inválido")
+	}
+
+	custos := []model.FichaCustoGrade{
+		{Grade: "INFANTIL", Custo: infantil},
+		{Grade: "JUVENIL", Custo: juvenil},
+		{Grade: "ADULTO", Custo: adulto},
+		{Grade: "EXTRA", Custo: extra},
+	}
+
+	return custos, nil
+}
+
+// Parse de Custos gerais (modelo, arte)
+func parseCustos(c echo.Context) model.FichaCustos {
+	custoModelo, _ := strconv.Atoi(c.FormValue("custo_modelo"))
+	custoArte, _ := strconv.Atoi(c.FormValue("custo_arte"))
+
+	return model.FichaCustos{
+		CustoModelo: custoModelo,
+		CustoArte:   custoArte,
+	}
 }

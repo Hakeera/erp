@@ -48,6 +48,16 @@ CREATE TABLE fichas_custos (
     total INT NOT NULL
 );
 
+CREATE TABLE fichas_custos_grade (
+    id SERIAL PRIMARY KEY,
+    ficha_id INT NOT NULL REFERENCES fichas_tecnicas(ficha_id),
+
+    grade TEXT NOT NULL, -- INFANTIL, JUVENIL, ADULTO, EXTRA
+    custo_tecido INT NOT NULL,
+
+    UNIQUE (ficha_id, grade)
+);
+
 CREATE TABLE fichas_tabelas (
     tabela_id SERIAL PRIMARY KEY,
     ficha_id INT NOT NULL REFERENCES fichas_tecnicas(ficha_id),

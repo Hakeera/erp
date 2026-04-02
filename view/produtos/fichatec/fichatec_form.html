@@ -62,7 +62,18 @@
 		>
 
 		<label>Custo Tecido</label>
-		<input type="number" name="custo_tecido" value="{{.Custos.CustoTecido}}">
+		<label>Infantil</label>
+		<input name="custo_infantil" value="{{.GetCustoGrade "INFANTIL"}}">
+
+		<label>Juvenil</label>
+		<input name="custo_juvenil" value="{{.GetCustoGrade "JUVENIL"}}">
+
+		<label>Adulto</label>
+		<input name="custo_adulto" value="{{.GetCustoGrade "ADULTO"}}">
+
+		<label>Extra</label>
+		<input name="custo_extra" value="{{.GetCustoGrade "EXTRA"}}">
+
 
 		<label>Custo Arte</label>
 		<input type="number" name="custo_arte" value="{{.Custos.CustoArte}}">

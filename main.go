@@ -73,6 +73,7 @@ func main() {
 
 	// Echo
 	e := echo.New()
+	e.Static("/static", "view/static")
 	e.Renderer = renderer
 
 	// Rotas

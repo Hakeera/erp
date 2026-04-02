@@ -12,20 +12,26 @@ type FichaTecnica struct {
 	TipoArte  string
 	Descricao string
 
-	Custos  FichaCustos
-	Tabelas []FichaTabela
+	Custos      FichaCustos
+	CustosGrade []FichaCustoGrade
+	Tabelas     []FichaTabela
 }
 
 type FichaCustos struct {
 	FichaID int
 
 	CustoModelo int
-	CustoTecido int
 	CustoArte   int
 
 	CustosExtras map[string]int
 
 	Total int
+}
+
+type FichaCustoGrade struct {
+	FichaID int
+	Grade   string
+	Custo   int
 }
 
 type FichaTabela struct {

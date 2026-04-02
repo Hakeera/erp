@@ -4,6 +4,7 @@ import (
 	"erp/model"
 	repository "erp/repository/produtos"
 	"errors"
+	"fmt"
 )
 
 // --- CREATE ---
@@ -17,11 +18,17 @@ func CriarFicha(f model.FichaTecnica) error {
 		return errors.New("campos obrigatórios não preenchidos")
 	}
 
-	// Calcular total no service
-	f.Custos.Total =
-		f.Custos.CustoModelo +
-			f.Custos.CustoTecido +
-			f.Custos.CustoArte
+	if len(f.CustosGrade) == 0 {
+		return errors.New("custos por grade são obrigatórios")
+	}
+
+	fmt.Println("CUSTO GRADE:", f.CustosGrade)
+	// valida se todas as grades têm valor
+	for _, cg := range f.CustosGrade {
+		if cg.Custo <= 0 {
+			return fmt.Errorf("custo inválido para grade %s", cg.Grade)
+		}
+	}
 
 	return repository.CriarFicha(f)
 }
@@ -38,20 +45,17 @@ func ListarFichatec() ([]model.FichaTecnica, error) {
 	return fichas, nil
 }
 
-func BuscarFichaPorID(id int) (model.FichaTecnica, error) {
-
+func BuscarFichaPorID(id int) (model.FichaTecnica, model.Modelo, error) {
 	if id == 0 {
-		return model.FichaTecnica{}, errors.New("ficha inválida")
+		return model.FichaTecnica{}, model.Modelo{}, errors.New("ficha inválida")
 	}
 
-	ficha, err := repository.BuscarFichaPorID(id)
+	ficha, modelo, err := repository.BuscarFichaPorID(id)
 	if err != nil {
-		return model.FichaTecnica{}, err
+		return model.FichaTecnica{}, model.Modelo{}, err
 	}
 
-	// Regras Futuras
-
-	return ficha, nil
+	return ficha, modelo, nil
 }
 
 // --- UPDATE ---
@@ -60,12 +64,6 @@ func AtualizarFichatec(f model.FichaTecnica) error {
 	if f.FichaID == 0 {
 		return errors.New("ficha inválida")
 	}
-
-	// Regra importante:
-	f.Custos.Total =
-		f.Custos.CustoModelo +
-			f.Custos.CustoTecido +
-			f.Custos.CustoArte
 
 	return repository.AtualizarFichatec(f)
 }
